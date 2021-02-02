@@ -70,7 +70,7 @@ namespace BustPCap
         {
             _stream?.Flush();
         }
-        
+
         /// <summary>
         /// Starts writing the file, and starts timer if time rotation is used
         /// </summary>
@@ -95,7 +95,7 @@ namespace BustPCap
 
             _stream = File.Open(currentFilename, FileMode.Create, FileAccess.Write);
 
-            if(Compress)
+            if (Compress)
                 _stream = new GZipStream(_stream, CompressionMode.Compress);
 
             WriteHeader();
@@ -159,7 +159,7 @@ namespace BustPCap
                         Start();
                     }
                 }
-                
+
             }
 
             if (RotationTime > 0)
