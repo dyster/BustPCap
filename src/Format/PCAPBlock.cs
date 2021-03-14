@@ -8,6 +8,9 @@ namespace BustPCap
         public PCAPBlock(byte[] bytes, PCAPHeader header)
         {
             Header = header;
+
+            // the term swapped is from the file point of view, since C# on Intel is "backwards", swapped actually means the right way around for it
+            // so NOT swapped means we need to swap it
             var swapped = header.swapped;
 
             // yes, the reverse should only be called once. sue me
@@ -15,14 +18,14 @@ namespace BustPCap
             // First 8 bytes is timestamp
             var ticks = new byte[4];
             Array.Copy(bytes, 0, ticks, 0, 4);
-            if (swapped)
+            if (!swapped)
                 Array.Reverse(ticks);
 
             DateTime dateTime = _unixepoch.AddSeconds(BitConverter.ToUInt32(ticks, 0));
 
             var msoffset = new byte[4];
             Array.Copy(bytes, 4, msoffset, 0, 4);
-            if (swapped)
+            if (!swapped)
                 Array.Reverse(msoffset);
 
             uint microseconds = BitConverter.ToUInt32(msoffset, 0);
@@ -31,7 +34,7 @@ namespace BustPCap
             // then payload length
             var octets = new byte[4];
             Array.Copy(bytes, 8, octets, 0, octets.Length);
-            if (swapped)
+            if (!swapped)
                 Array.Reverse(octets);
 
             PayloadLength = BitConverter.ToUInt32(octets, 0);
@@ -39,7 +42,7 @@ namespace BustPCap
             // and the original length
             var origlength = new byte[4];
             Array.Copy(bytes, 12, origlength, 0, origlength.Length);
-            if (swapped)
+            if (!swapped)
                 Array.Reverse(origlength);
             OriginalLength = BitConverter.ToUInt32(origlength, 0);
         }

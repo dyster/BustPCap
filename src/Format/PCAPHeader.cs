@@ -16,23 +16,20 @@ namespace BustPCap
 
         public PCAPHeader(byte[] header)
         {
+            // https://wiki.wireshark.org/Development/LibpcapFileFormat
+            // since the ordering can be confusing, the term swapped here is the one from the wireshark wiki
+            // so swapped means the first byte in the file is D4
+
+            // this actually swaps the order
             magic_number = BitConverter.ToUInt32(header, 0);
+
             if (magic_number == 0xa1b2c3d4)
-                swapped = false;
-            else if (magic_number == 0xd4c3b2a1)
                 swapped = true;
+            else if (magic_number == 0xd4c3b2a1)
+                swapped = false;
 
 
             if (swapped)
-            {
-                version_major = BitConverter.ToUInt16(new[] { header[5], header[4] }, 0);
-                version_minor = BitConverter.ToUInt16(new[] { header[7], header[6] }, 0);
-                thiszone = BitConverter.ToInt32(new[] { header[11], header[10], header[9], header[8] }, 0);
-                sigfigs = BitConverter.ToUInt32(new[] { header[15], header[14], header[13], header[12] }, 0);
-                snaplen = BitConverter.ToUInt32(new[] { header[19], header[18], header[17], header[16] }, 0);
-                network = BitConverter.ToUInt32(new[] { header[23], header[22], header[21], header[20] }, 0);
-            }
-            else
             {
                 version_major = BitConverter.ToUInt16(header, 4);
                 version_minor = BitConverter.ToUInt16(header, 6);
@@ -40,6 +37,15 @@ namespace BustPCap
                 sigfigs = BitConverter.ToUInt32(header, 12);
                 snaplen = BitConverter.ToUInt32(header, 16);
                 network = BitConverter.ToUInt32(header, 20);
+            }
+            else
+            {
+                version_major = BitConverter.ToUInt16(new[] { header[5], header[4] }, 0);
+                version_minor = BitConverter.ToUInt16(new[] { header[7], header[6] }, 0);
+                thiszone = BitConverter.ToInt32(new[] { header[11], header[10], header[9], header[8] }, 0);
+                sigfigs = BitConverter.ToUInt32(new[] { header[15], header[14], header[13], header[12] }, 0);
+                snaplen = BitConverter.ToUInt32(new[] { header[19], header[18], header[17], header[16] }, 0);
+                network = BitConverter.ToUInt32(new[] { header[23], header[22], header[21], header[20] }, 0);
             }
         }
 
