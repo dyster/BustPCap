@@ -15,9 +15,9 @@ namespace BustPCap
         /// </summary>
         /// <param name="folder">The folder where the file or files will be saved</param>
         /// <param name="filename">The filename, excluding extension</param>
-        public PCAPWriter(string folder, string filenameTemplate)
+        public PCAPWriter(string folder, string filename)
         {
-            FileNameTemplate = filenameTemplate;
+            FileName = filename;
             Folder = Directory.CreateDirectory(folder).FullName;
         }
 
@@ -27,7 +27,7 @@ namespace BustPCap
         /// <param name="filePath">The file to write to (folder and filename will be used for rotation), extension excluded</param>
         public PCAPWriter(string filePath)
         {
-            FileNameTemplate = Path.GetFileNameWithoutExtension(filePath);
+            FileName = Path.GetFileNameWithoutExtension(filePath);
             Folder = Directory.CreateDirectory(filePath.Substring(0, filePath.LastIndexOf('\\'))).FullName;
         }
 
@@ -39,7 +39,7 @@ namespace BustPCap
         /// <summary>
         /// The name of the file to write (extension excluded), used as base for rotation
         /// </summary>
-        public string FileNameTemplate { get; }
+        public string FileName { get; }
 
         /// <summary>
         /// The folder where file(s) will be written
@@ -76,22 +76,21 @@ namespace BustPCap
         /// </summary>
         public void Start()
         {
-            _startTime = DateTime.Now; // DateTime.Now.ToString("yyyy-MM-dd HH.mm.ss")
+            _startTime = DateTime.Now;
             var currentFilename = "";
-            var stamp = DateTime.Now.ToString("yyyy-MM-dd HH.mm.ss");
 
             if (RotationTime > 0 || RotationSize > 0)
             {
-                currentFilename = Folder + "\\" + stamp + "_" + this.FileNameTemplate + "_" + _rotationIndex++ + Extension;
+                currentFilename = Folder + "\\" + FileName + "_" + _rotationIndex++ + Extension;
             }
             else
             {
-                currentFilename = Folder + "\\" + stamp + "_" + this.FileNameTemplate + Extension;
+                currentFilename = Folder + "\\" + FileName + Extension;
             }
 
             while (File.Exists(currentFilename))
             {
-                currentFilename = Folder + "\\" + stamp + "_" + this.FileNameTemplate + "_" + _rotationIndex++ + Extension;
+                currentFilename = Folder + "\\" + FileName + "_" + _rotationIndex++ + Extension;
             }
 
             _stream = File.Open(currentFilename, FileMode.Create, FileAccess.Write);
