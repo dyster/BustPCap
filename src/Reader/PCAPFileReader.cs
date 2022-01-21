@@ -31,12 +31,16 @@ namespace BustPCap
                     break;
 
                 if (read == buffer.Length)
-                    pcapReaderStream.Write(buffer);
+                {
+                    if (pcapReaderStream.Write(buffer) != null)
+                        break;
+                }
                 else
                 {
                     var cut = new byte[read];
                     Array.Copy(buffer, cut, read);
-                    pcapReaderStream.Write(cut);
+                    if (pcapReaderStream.Write(cut) != null)
+                        break;
                 }
 
                 while (pcapReaderStream.ReadBlocks.Count > 0)
@@ -44,11 +48,17 @@ namespace BustPCap
 
                 toRead -= read;
 
-                // blocks are already processed in the underlying stream, so let's just copy them over
-                this.StartTime = pcapReaderStream.StartTime;
-                this.EndTime = pcapReaderStream.EndTime;
-                this.Count = pcapReaderStream.Count;
+                
             }
+
+            // pick up orphaned blocks in case stream terminated early
+            while (pcapReaderStream.ReadBlocks.Count > 0)
+                yield return pcapReaderStream.ReadBlocks.Dequeue();
+
+            // blocks are already processed in the underlying stream, so let's just copy them over
+            this.StartTime = pcapReaderStream.StartTime;
+            this.EndTime = pcapReaderStream.EndTime;
+            this.Count = pcapReaderStream.Count;
         }
 
         public void Dispose()

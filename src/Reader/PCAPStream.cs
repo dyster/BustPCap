@@ -15,16 +15,17 @@ namespace BustPCap
         private long _position = 0;
         private long _writePosition = 0;
 
-        public void Write(byte[] bytes)
+        public string Write(byte[] bytes)
         {
-            Write(bytes, 0, bytes.Length);
+            return Write(bytes, 0, bytes.Length);
         }
 
         /// <summary>
         /// Write raw data into the stream to be parsed as PCAP
         /// </summary>
         /// <param name="bytes"></param>
-        public void Write(byte[] bytes, int offset, int length)
+        /// <returns>null if terminated correctly, or string on error</returns>
+        public string Write(byte[] bytes, int offset, int length)
         {
             // go to writing "mode"
             _stream.Position = _writePosition;
@@ -40,20 +41,20 @@ namespace BustPCap
                 if (_stream.Length < 24)
                 {
                     // not enough data to init, wait
-                    return;
+                    return null;
                 }
 
                 var header = new byte[24];
                 int read = _stream.Read(header, 0, header.Length);
                 if (read != 24)
-                    throw new Exception("Stream read problem");
+                    return "Stream read problem";
                 Header = new PCAPHeader(header);
 
                 var isPCAP = header[0] == 0xd4 && header[1] == 0xc3 && header[2] == 0xb2 && header[3] == 0xa1 || header[0] == 0xa1 &&
                     header[1] == 0xb2 && header[2] == 0xc3 && header[3] == 0xd4;
 
                 if (!isPCAP)
-                    throw new InvalidDataException("Stream was initialized with invalid data");
+                    return "Stream was initialized with invalid data";
 
                 _init = true;
             }
@@ -63,12 +64,12 @@ namespace BustPCap
                 var headerbytes = new byte[16];
                 var read = _stream.Read(headerbytes, 0, headerbytes.Length);
                 if (read != headerbytes.Length)
-                    throw new Exception("Stream read problem");
+                    return "Stream read problem";
 
                 if (headerbytes[0] == 0 && headerbytes[1] == 0 && headerbytes[2] == 0 && headerbytes[3] == 0)
                 {
                     // File has ended prematurely probably, end? not sure what to do here
-                    throw new NotImplementedException("This error is currently unhandled");
+                    return "empty header, file ended prematurely";
                 }
 
                 var pcapBlock = new PCAPBlock(headerbytes, Header);
@@ -82,7 +83,7 @@ namespace BustPCap
 
                     read = _stream.Read(pcapBlock.PayLoad, 0, pcapBlock.PayLoad.Length);
                     if (read != pcapBlock.PayLoad.Length)
-                        throw new Exception("Stream read problem");
+                        return "Stream read problem";
                     Process(pcapBlock);
                     ReadBlocks.Enqueue(pcapBlock);
                 }
@@ -94,7 +95,7 @@ namespace BustPCap
 
                     // save for next time we read
                     _position = _stream.Position;
-                    return;
+                    return null;
 
                 }
 
@@ -114,6 +115,8 @@ namespace BustPCap
                 _writePosition = _stream.Position;
                 _position = 0;
             }
+
+            return null;
         }
 
         public Queue<PCAPBlock> ReadBlocks { get; set; } = new Queue<PCAPBlock>();
