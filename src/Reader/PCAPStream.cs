@@ -15,15 +15,20 @@ namespace BustPCap
         private long _position = 0;
         private long _writePosition = 0;
 
+        public void Write(byte[] bytes)
+        {
+            Write(bytes, 0, bytes.Length);
+        }
+
         /// <summary>
         /// Write raw data into the stream to be parsed as PCAP
         /// </summary>
         /// <param name="bytes"></param>
-        public void Write(byte[] bytes)
+        public void Write(byte[] bytes, int offset, int length)
         {
             // go to writing "mode"
             _stream.Position = _writePosition;
-            _stream.Write(bytes, 0, bytes.Length);
+            _stream.Write(bytes, offset, length);
             _writePosition = _stream.Position;
 
             // and then to reading "mode"
