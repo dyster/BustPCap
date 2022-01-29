@@ -46,12 +46,11 @@ namespace BustPCap
 
                 var header = new byte[24];
                 int read = _stream.Read(header, 0, header.Length);
-                if (read != 24)
+                if (read != header.Length)
                     return "Stream read problem";
                 Header = new PCAPHeader(header);
 
-                var isPCAP = header[0] == 0xd4 && header[1] == 0xc3 && header[2] == 0xb2 && header[3] == 0xa1 || header[0] == 0xa1 &&
-                    header[1] == 0xb2 && header[2] == 0xc3 && header[3] == 0xd4;
+                var isPCAP = IsPCAP(header);
 
                 if (!isPCAP)
                     return "Stream was initialized with invalid data";
@@ -59,7 +58,7 @@ namespace BustPCap
                 _init = true;
             }
 
-            while (_stream.Length - _stream.Position > 16)
+            while (_stream.Length - _stream.Position >= 16)
             {
                 var headerbytes = new byte[16];
                 var read = _stream.Read(headerbytes, 0, headerbytes.Length);
@@ -105,6 +104,7 @@ namespace BustPCap
             // save for next time we read
             _position = _stream.Position;
 
+            // slice off already processed data
             if (_stream.Length > 5000)
             {
                 var newstream = new MemoryStream();

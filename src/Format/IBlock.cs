@@ -4,9 +4,9 @@ namespace BustPCap
 {
     public interface IBlock
     {
-        DateTime DateTime { get; }
+        DateTime DateTime { get; set; }
         byte[] PayLoad { get; set; }
         uint OriginalLength { get; }
-        uint PayloadLength { get; }
+        int PayloadLength { get; }
     }
 }

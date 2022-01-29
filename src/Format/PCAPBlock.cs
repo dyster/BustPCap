@@ -5,9 +5,11 @@ namespace BustPCap
     public class PCAPBlock : IBlock
     {
         private static DateTime _unixepoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified);
+        private readonly int _bytelength;
         public PCAPBlock(byte[] bytes, PCAPHeader header)
         {
             Header = header;
+            _bytelength = bytes.Length;
 
             // the term swapped is from the file point of view, since C# on Intel is "backwards", swapped actually means the right way around for it
             // so NOT swapped means we need to swap it
@@ -37,7 +39,8 @@ namespace BustPCap
             if (!swapped)
                 Array.Reverse(octets);
 
-            PayloadLength = BitConverter.ToUInt32(octets, 0);
+            // should be uint but if that actually became a problem, we would have bigger problems
+            PayloadLength = BitConverter.ToInt32(octets, 0);
 
             // and the original length
             var origlength = new byte[4];
@@ -47,10 +50,15 @@ namespace BustPCap
             OriginalLength = BitConverter.ToUInt32(origlength, 0);
         }
 
-        public DateTime DateTime { get; }
-        public uint PayloadLength { get; }
+        public DateTime DateTime { get; set; }
+        public int PayloadLength { get; }
         public uint OriginalLength { get; }
         public byte[] PayLoad { get; set; }
         public PCAPHeader Header { get; set; }
+
+        public override string ToString()
+        {
+            return Header + " [" + _bytelength + " bytes]";
+        }
     }
 }
