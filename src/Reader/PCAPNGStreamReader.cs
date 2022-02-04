@@ -98,6 +98,7 @@ namespace BustPCap
                     case PCAPNGHeader.EnhancedPacket:
                         uint interfaceId = PCAPNGBlock.GetUInt32(data, normalByteOrder, 0);
                         var currentInterface = linklayertypes[(int)interfaceId];
+                        currentblock.LinkLayerType = currentInterface.LinkLayerType;
 
                         uint highstamp = PCAPNGBlock.GetUInt32(data, normalByteOrder, 4);
                         uint lowstamp = PCAPNGBlock.GetUInt32(data, normalByteOrder, 8);
@@ -185,6 +186,8 @@ namespace BustPCap
                 var endbytes = new byte[4];
                 i += stream.Read(endbytes, 0, endbytes.Length);
                 uint endlength = PCAPNGBlock.GetUInt32(endbytes, normalByteOrder, 0);
+
+                Process(currentblock);
 
                 if (endlength != length)
                     throw new InvalidDataException();
