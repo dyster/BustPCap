@@ -8,7 +8,7 @@ namespace BustPCap
     /// As opposed to the StreamReader that reads an actual stream object, this is a read/write stream where you insert chunks of data and get PCAP blocks out.
     /// A PCAP pump
     /// </summary>
-    public class PCAPStream : PCAPReader
+    public class PCAPStream : BaseReader, IReader
     {
         private MemoryStream _stream = new MemoryStream();
         private bool _init = false;
@@ -119,7 +119,7 @@ namespace BustPCap
             return null;
         }
 
-        public Queue<PCAPBlock> ReadBlocks { get; set; } = new Queue<PCAPBlock>();
+        public Queue<IBlock> ReadBlocks { get; set; } = new Queue<IBlock>();
 
         public PCAPHeader Header { get; set; }
     }

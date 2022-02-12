@@ -6,7 +6,7 @@ namespace BustPCap
     /// <summary>
     /// The base version of the Reader, does not work on its own
     /// </summary>
-    public class PCAPReader
+    public class BaseReader
     {
         /// <summary>
         /// Examines a file to see if it is in PCAP format

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BustPCap
 {
-    public class PCAPNGStream : PCAPReader
+    public class PCAPNGStream : BaseReader, IReader
     {
         private MemoryStream _stream = new MemoryStream();
         private bool _init = false;
@@ -242,7 +242,7 @@ namespace BustPCap
             return null;
         }
 
-        public Queue<PCAPNGBlock> ReadBlocks { get; set; } = new Queue<PCAPNGBlock>();
+        public Queue<IBlock> ReadBlocks { get; set; } = new Queue<IBlock>();
 
         //public PCAPNGHeader Header { get; set; }
     }

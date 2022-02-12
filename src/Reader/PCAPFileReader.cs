@@ -4,7 +4,7 @@ using System.IO;
 
 namespace BustPCap
 {
-    public class PCAPFileReader : PCAPReader, IDisposable
+    public class PCAPFileReader : BaseReader, IDisposable
     {
         private readonly FileStream _fileStream;
 
@@ -19,41 +19,13 @@ namespace BustPCap
         }
 
         public IEnumerable<PCAPBlock> Enumerate()
-        {
-            var buffer = new byte[61440];
+        {            
             var pcapReaderStream = new PCAPStream();
 
-            long toRead = _fileStream.Length;
-            while (toRead > 0)
-            {
-                var read = _fileStream.Read(buffer, 0, buffer.Length);
-                if (read == 0)
-                    break;
+            var genreader = new GenericStreamReader(pcapReaderStream, 61440, _fileStream);
 
-                if (read == buffer.Length)
-                {
-                    if (pcapReaderStream.Write(buffer) != null)
-                        break;
-                }
-                else
-                {
-                    var cut = new byte[read];
-                    Array.Copy(buffer, cut, read);
-                    if (pcapReaderStream.Write(cut) != null)
-                        break;
-                }
-
-                while (pcapReaderStream.ReadBlocks.Count > 0)
-                    yield return pcapReaderStream.ReadBlocks.Dequeue();
-
-                toRead -= read;
-
-                
-            }
-
-            // pick up orphaned blocks in case stream terminated early
-            while (pcapReaderStream.ReadBlocks.Count > 0)
-                yield return pcapReaderStream.ReadBlocks.Dequeue();
+            foreach (var block in genreader.Enumerate())
+                yield return (PCAPBlock)block;
 
             // blocks are already processed in the underlying stream, so let's just copy them over
             this.StartTime = pcapReaderStream.StartTime;
