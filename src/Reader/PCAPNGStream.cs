@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BustPCap
 {
@@ -42,7 +39,7 @@ namespace BustPCap
                 var header = new byte[4];
                 int read = _stream.Read(header, 0, header.Length);
                 if (read != header.Length)
-                    return "Stream read problem";                           
+                    return "Stream read problem";
 
                 if (!IsPCAPNG(header))
                     return "Stream was initialized with invalid data";
@@ -51,12 +48,12 @@ namespace BustPCap
                 _init = true;
             }
 
-            
+
             while (_stream.Length - _stream.Position >= 12)
             {
                 var headerbytes = new byte[4];
                 var read = _stream.Read(headerbytes, 0, headerbytes.Length);
-                
+
 
                 if (headerbytes[0] == 0 && headerbytes[1] == 0 && headerbytes[2] == 0 && headerbytes[3] == 0)
                 {
@@ -71,19 +68,21 @@ namespace BustPCap
                     linklayertypes.Clear();
 
                     read += _stream.Read(lengthbytes, 0, lengthbytes.Length);
-                    
+
 
                     var magicbytes = new byte[4];
                     read += _stream.Read(magicbytes, 0, magicbytes.Length);
-                    
+
 
                     // the author will consider reversed order as "normal" because then it matches the C# order 
-                    if (magicbytes[0] == 0x1A && magicbytes[1] == 0x2B && magicbytes[2] == 0x3c && magicbytes[3] == 0x4d)
+                    if (magicbytes[0] == 0x1A && magicbytes[1] == 0x2B && magicbytes[2] == 0x3c &&
+                        magicbytes[3] == 0x4d)
                     {
                         // normal magic bytes
-                        normalByteOrder = false;                        
+                        normalByteOrder = false;
                     }
-                    else if (magicbytes[0] == 0x4d && magicbytes[1] == 0x3c && magicbytes[2] == 0x2b && magicbytes[3] == 0x1a)
+                    else if (magicbytes[0] == 0x4d && magicbytes[1] == 0x3c && magicbytes[2] == 0x2b &&
+                             magicbytes[3] == 0x1a)
                     {
                         // reversed order magic bytes
                         normalByteOrder = true;
@@ -96,7 +95,6 @@ namespace BustPCap
                 else
                 {
                     read += _stream.Read(lengthbytes, 0, lengthbytes.Length);
-                    
                 }
 
                 uint length = PCAPNGBlock.GetUInt32(lengthbytes, normalByteOrder, 0);
@@ -114,7 +112,8 @@ namespace BustPCap
                     data = new byte[length - 12];
                 }
 
-                if (_stream.Length - _stream.Position >= data.Length + 4) // the remaining stream needs to contain payload + the endlength bytes
+                if (_stream.Length - _stream.Position >=
+                    data.Length + 4) // the remaining stream needs to contain payload + the endlength bytes
                 {
                     // LET'S ROCK
 
@@ -145,7 +144,7 @@ namespace BustPCap
                             if (currentInterface.TimeStampResolution == 0)
                             {
                                 // if the resolution is not set, assume power of 6 which is standard pcap
-                                                                
+
                                 // a C# tick is a hundred nanoseconds, which is 10 times the standard pcap tick
                                 // do a span per half to make sure we don't get signed byte problems
                                 TimeSpan span1 = TimeSpan.FromTicks(lowstamp * 10);
@@ -220,7 +219,6 @@ namespace BustPCap
                     // save for next time we read
                     _position = _stream.Position;
                     return null;
-
                 }
             }
 

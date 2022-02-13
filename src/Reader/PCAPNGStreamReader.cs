@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 
 namespace BustPCap
@@ -15,7 +14,6 @@ namespace BustPCap
 
         public IEnumerable<PCAPNGBlock> Enumerate()
         {
-            
             var pcapReaderStream = new PCAPNGStream();
 
             var genreader = new GenericStreamReader(pcapReaderStream, 4096, _stream);

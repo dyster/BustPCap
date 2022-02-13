@@ -36,7 +36,7 @@ namespace BustPCap
             else if (IsPCAP(bytes))
                 return Format.PCAP;
             else
-                return Format.NOPE;            
+                return Format.NOPE;
         }
 
         public static bool IsPCAP(byte[] bytes)
@@ -57,7 +57,7 @@ namespace BustPCap
 
         protected void Process(IBlock block)
         {
-            if(block.DateTime == default)
+            if (block.DateTime == default)
             {
                 return;
             }
@@ -73,8 +73,6 @@ namespace BustPCap
                 EndTime = block.DateTime;
 
             Count++;
-
-            
         }
     }
 

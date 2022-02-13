@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace BustPCap
 {
@@ -11,6 +9,7 @@ namespace BustPCap
         IReader _reader;
         int _buffersize;
         Stream _stream;
+
         public GenericStreamReader(IReader reader, int buffersize, Stream stream)
         {
             _reader = reader;
@@ -21,7 +20,7 @@ namespace BustPCap
         public IEnumerable<IBlock> Enumerate()
         {
             var buffer = new byte[_buffersize];
-            
+
             while (_stream.CanRead)
             {
                 var read = _stream.Read(buffer, 0, buffer.Length);
@@ -42,7 +41,7 @@ namespace BustPCap
                 }
 
                 while (_reader.ReadBlocks.Count > 0)
-                    yield return _reader.ReadBlocks.Dequeue();                
+                    yield return _reader.ReadBlocks.Dequeue();
             }
 
             // pick up orphaned blocks in case stream terminated early

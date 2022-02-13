@@ -23,9 +23,9 @@ namespace BustPCap
             var pcapReaderStream = new PCAPNGStream();
             var genreader = new GenericStreamReader(pcapReaderStream, 61440, _fileStream);
 
-            foreach(var block in genreader.Enumerate())
+            foreach (var block in genreader.Enumerate())
                 yield return (PCAPNGBlock)block;
-            
+
             // blocks are already processed in the underlying stream, so let's just copy them over
             this.StartTime = pcapReaderStream.StartTime;
             this.EndTime = pcapReaderStream.EndTime;

@@ -19,7 +19,7 @@ namespace BustPCap
         }
 
         public IEnumerable<PCAPBlock> Enumerate()
-        {            
+        {
             var pcapReaderStream = new PCAPStream();
 
             var genreader = new GenericStreamReader(pcapReaderStream, 61440, _fileStream);

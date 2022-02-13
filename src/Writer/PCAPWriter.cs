@@ -82,7 +82,8 @@ namespace BustPCap
 
             if (RotationTime > 0 || RotationSize > 0)
             {
-                currentFilename = Folder + "\\" + stamp + "_" + this.FileNameTemplate + "_" + _rotationIndex++ + Extension;
+                currentFilename = Folder + "\\" + stamp + "_" + this.FileNameTemplate + "_" + _rotationIndex++ +
+                                  Extension;
             }
             else
             {
@@ -91,7 +92,8 @@ namespace BustPCap
 
             while (File.Exists(currentFilename))
             {
-                currentFilename = Folder + "\\" + stamp + "_" + this.FileNameTemplate + "_" + _rotationIndex++ + Extension;
+                currentFilename = Folder + "\\" + stamp + "_" + this.FileNameTemplate + "_" + _rotationIndex++ +
+                                  Extension;
             }
 
             _stream = File.Open(currentFilename, FileMode.Create, FileAccess.Write);
@@ -160,7 +162,6 @@ namespace BustPCap
                         Start();
                     }
                 }
-
             }
 
             if (RotationTime > 0)

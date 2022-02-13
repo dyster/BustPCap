@@ -6,6 +6,7 @@ namespace BustPCap
     {
         private static DateTime _unixepoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified);
         private readonly int _bytelength;
+
         public PCAPBlock(byte[] bytes, PCAPHeader header)
         {
             Header = header;

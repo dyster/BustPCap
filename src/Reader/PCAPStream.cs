@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 
 namespace BustPCap
@@ -95,12 +94,9 @@ namespace BustPCap
                     // save for next time we read
                     _position = _stream.Position;
                     return null;
-
                 }
-
-
-
             }
+
             // save for next time we read
             _position = _stream.Position;
 

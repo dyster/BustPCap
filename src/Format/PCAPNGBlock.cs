@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace BustPCap
 {
@@ -79,7 +78,7 @@ namespace BustPCap
                 Array.Copy(data, startIndex, readbytes, 0, 2);
                 return BitConverter.ToUInt16(new byte[] { readbytes[1], readbytes[0] }, 0);
             }
-        }        
+        }
     }
 
     public enum PCAPNGHeader
@@ -134,21 +133,22 @@ namespace BustPCap
                         if (normalByteOrder)
                         {
                             IPv4 = new IPAddress(new[]
-                            {options[pointer], options[pointer + 1], options[pointer + 2], options[pointer + 3]});
+                                { options[pointer], options[pointer + 1], options[pointer + 2], options[pointer + 3] });
                             pointer += 4;
                             IPv4SubNet = new IPAddress(new[]
-                                {options[pointer], options[pointer + 1], options[pointer + 2], options[pointer + 3]});
+                                { options[pointer], options[pointer + 1], options[pointer + 2], options[pointer + 3] });
                             pointer += 4;
                         }
                         else
                         {
                             IPv4 = new IPAddress(new[]
-                            {options[pointer+3], options[pointer + 2], options[pointer + 1], options[pointer]});
+                                { options[pointer + 3], options[pointer + 2], options[pointer + 1], options[pointer] });
                             pointer += 4;
                             IPv4SubNet = new IPAddress(new[]
-                                {options[pointer+3], options[pointer + 2], options[pointer + 1], options[pointer]});
+                                { options[pointer + 3], options[pointer + 2], options[pointer + 1], options[pointer] });
                             pointer += 4;
                         }
+
                         break;
                     case 5:
                         // no ipv6 thank you very much
@@ -167,7 +167,7 @@ namespace BustPCap
                         {
                             MAC = new[]
                             {
-                                options[pointer+5], options[pointer + 4], options[pointer + 3], options[pointer + 2],
+                                options[pointer + 5], options[pointer + 4], options[pointer + 3], options[pointer + 2],
                                 options[pointer + 1], options[pointer]
                             };
                         }
