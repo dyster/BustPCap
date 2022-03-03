@@ -2,7 +2,7 @@
 
 namespace BustPCap
 {
-    class Functions
+    internal static class Functions
     {
         /// <summary>
         /// Converts a DateTime to Unix Epoc (seconds since 1970)
@@ -12,7 +12,7 @@ namespace BustPCap
         public static uint DateTimeToUnixEpoch(DateTime time)
         {
             var unixepoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            TimeSpan timeSpan = time.Subtract(unixepoch);
+            var timeSpan = time.Subtract(unixepoch);
             return (uint)timeSpan.TotalSeconds;
         }
     }

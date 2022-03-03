@@ -14,7 +14,7 @@ namespace BustPCap
         /// Writes packets to a PCAP file, does not support timezone correction or orig_len currently
         /// </summary>
         /// <param name="folder">The folder where the file or files will be saved</param>
-        /// <param name="filename">The filename, excluding extension</param>
+        /// <param name="filenameTemplate">The filename, excluding extension</param>
         public PCAPWriter(string folder, string filenameTemplate)
         {
             FileNameTemplate = filenameTemplate;
@@ -115,7 +115,7 @@ namespace BustPCap
         private void WriteHeader()
         {
             //bytes[0] == 0xd4 && bytes[1] == 0xc3 && bytes[2] == 0xb2 && bytes[3] == 0xa1
-            var magic = new byte[4] { 0xd4, 0xc3, 0xb2, 0xa1 };
+            var magic = new byte[] { 0xd4, 0xc3, 0xb2, 0xa1 };
             _stream.Write(magic, 0, magic.Length);
 
             ushort major = 2;
@@ -147,7 +147,7 @@ namespace BustPCap
                 if (_stream is GZipStream)
                 {
                     var gz = (GZipStream)_stream;
-                    ;
+                    
                     if (gz.BaseStream.Position > RotationSize * 1024 * 1024)
                     {
                         Stop();
