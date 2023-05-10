@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace BustPCap
@@ -8,6 +9,8 @@ namespace BustPCap
     /// </summary>
     public class BaseReader
     {
+        private List<string> _log = new List<string>();
+
         /// <summary>
         /// Examines a file to see if it is in PCAP format
         /// </summary>
@@ -73,6 +76,16 @@ namespace BustPCap
                 EndTime = block.DateTime;
 
             Count++;
+        }
+
+        protected void Log(string text)
+        {
+            _log.Add(text);
+        }
+
+        public string[] GetLogs()
+        {
+            return _log.ToArray();
         }
     }
 

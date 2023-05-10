@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.Json;
 
 namespace BustPCap
 {
@@ -40,7 +41,7 @@ namespace BustPCap
         public static ulong GetUInt64(byte[] data, bool byteorder, int startIndex)
         {
             if (byteorder)
-            {
+            {                
                 return BitConverter.ToUInt64(data, startIndex);
             }
             else
@@ -238,5 +239,10 @@ namespace BustPCap
         public Int64 TSOffset { get; }
         public string Hardware { get; }
         public List<string> Comments { get; set; } = new List<string>();
+
+        public override string ToString()
+        {
+            return JsonSerializer.Serialize(this);
+        }
     }
 }

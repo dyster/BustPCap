@@ -39,10 +39,16 @@ namespace BustPCap
                 var header = new byte[4];
                 int read = _stream.Read(header, 0, header.Length);
                 if (read != header.Length)
-                    return "Stream read problem";
+                {
+                    Log($"Stream read problem, asked for {header.Length} bytes, got {read}");
+                    return $"Stream read problem, asked for {header.Length} bytes, got {read}"; 
+                }
 
                 if (!IsPCAPNG(header))
+                {
+                    Log("Stream was initialized with invalid data");
                     return "Stream was initialized with invalid data";
+                }
 
                 _stream.Position = 0;
                 _init = true;
@@ -58,6 +64,7 @@ namespace BustPCap
                 if (headerbytes[0] == 0 && headerbytes[1] == 0 && headerbytes[2] == 0 && headerbytes[3] == 0)
                 {
                     // File has ended prematurely probably, end? not sure what to do here
+                    Log("empty header, file ended prematurely");
                     return "empty header, file ended prematurely";
                 }
 
@@ -89,6 +96,7 @@ namespace BustPCap
                     }
                     else
                     {
+                        Log("Incorrect PCAPNG magic bytes");
                         return "Incorrect PCAPNG magic bytes";
                     }
                 }
@@ -119,7 +127,10 @@ namespace BustPCap
 
                     read = _stream.Read(data, 0, data.Length);
                     if (read != data.Length)
-                        return "Stream read problem";
+                    {
+                        Log($"Stream read problem, asked for {data.Length} bytes, got {read}");
+                        return $"Stream read problem, asked for {data.Length} bytes, got {read}";
+                    }
 
 
                     switch (currentblock.Header)
@@ -131,6 +142,9 @@ namespace BustPCap
 
                             uint highstamp = PCAPNGBlock.GetUInt32(data, normalByteOrder, 4);
                             uint lowstamp = PCAPNGBlock.GetUInt32(data, normalByteOrder, 8);
+                            ulong stamp = PCAPNGBlock.GetUInt64(data, normalByteOrder, 4);
+                            var mod = Math.Pow(10, -6);
+                            var seconds = stamp * mod;
 
                             //ulong ticks = BitConverter.ToUInt64(data, 4);
 
@@ -149,7 +163,10 @@ namespace BustPCap
                                 // do a span per half to make sure we don't get signed byte problems
                                 TimeSpan span1 = TimeSpan.FromTicks(lowstamp * 10);
                                 TimeSpan span2 = TimeSpan.FromTicks(highstamp * 4294967296 * 10);
+                                TimeSpan span = TimeSpan.FromSeconds(seconds);
+                                var datetime = unixepoch + span;
                                 currentblock.DateTime = unixepoch + span1 + span2;
+                                
                             }
                             else if (currentInterface.TimeStampResolution > 0)
                             {
@@ -188,7 +205,7 @@ namespace BustPCap
 
                         case PCAPNGHeader.InterfaceDescription:
                             var interfaceDescription = new InterfaceDescription(data, normalByteOrder);
-
+                            Log(interfaceDescription.ToString());
                             linklayertypes.Add(interfaceDescription);
                             break;
                         case PCAPNGHeader.SectionHeader:
@@ -207,7 +224,10 @@ namespace BustPCap
                     ReadBlocks.Enqueue(currentblock);
 
                     if (endlength != length)
-                        return "endlength mismatch";
+                    {
+                        Log($"End length mismatch, endlength: {endlength} length {length}");
+                        return $"End length mismatch, endlength: {endlength} length {length}";
+                    }
                 }
                 else
                 {
