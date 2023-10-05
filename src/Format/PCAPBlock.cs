@@ -59,7 +59,7 @@ namespace BustPCap
 
         public override string ToString()
         {
-            return Header + " [" + _bytelength + " bytes]";
+            return Functions.SerializeClassToJSON(this);
         }
     }
 }

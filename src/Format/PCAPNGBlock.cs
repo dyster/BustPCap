@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
-using System.Text.Json;
+//using System.Text.Json;
 
 namespace BustPCap
 {
@@ -242,7 +242,7 @@ namespace BustPCap
 
         public override string ToString()
         {
-            return JsonSerializer.Serialize(this);
+            return Functions.SerializeClassToJSON(this);
         }
     }
 }

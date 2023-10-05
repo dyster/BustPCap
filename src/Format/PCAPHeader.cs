@@ -51,9 +51,7 @@ namespace BustPCap
 
         public override string ToString()
         {
-            // haters gonna hate
-            return string.Join("|",
-                this.GetType().GetProperties().Select(prop => prop.Name + ": " + prop.GetValue(this, null)));
+            return Functions.SerializeClassToJSON(this);
         }
     }
 }
